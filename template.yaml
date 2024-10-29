@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: role-policy
+
+Resources:
+  # ChatbotRole
+  ChatbotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: nfl-chatbot
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - chatbot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:aws:iam::${AWS::AccountId}:policy/invoke-lambda    
+
+  GuardrailPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: nfl-guardrail
+      PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: VisualEditor0
+              Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+                - lambda:InvokeAsync
+              Resource:
+                - !Sub arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:function:nfl-*
+
+  
